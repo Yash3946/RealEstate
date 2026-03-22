@@ -1,7 +1,8 @@
 const userSchema = require("../models/UserModel")
 const bcrypt = require("bcrypt")
 const mailSend = require("../utils/MailUtil")
-
+const jwt = require("jsonwebtoken")
+const secret = "secret"
 
 const getUsers = async (req, res) => {
     try {
@@ -63,10 +64,13 @@ const loginUser= async(req,res)=>{
             //password compare
             const isPasswordMatched = await bcrypt.compare(password,foundUserFromEmail.password)
             //..if password compare it will return true else false
+
+            // const token = jwt.sign(foundUserFromEmail.toObject(),secret)
+            const token = jwt.sign(foundUserFromEmail.toObject(),secret,{expiresIn:60})
             if(isPasswordMatched){
                 res.status(200).json({
                     message:"Login Success",
-                    data:foundUserFromEmail,
+                    token:token,
                     role:foundUserFromEmail.role
                 })  
             }
@@ -88,6 +92,7 @@ const loginUser= async(req,res)=>{
 
 
     }catch(err){
+        console.log(err)
 
         res.status(500).json({
             message:"error while logging in",

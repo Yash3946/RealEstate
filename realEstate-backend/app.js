@@ -5,6 +5,8 @@ const cors = require("cors")
 require("dotenv").config()
 app.use(express.json())
 app.use(cors()) //allow all requests
+const secret = "secret"
+const jwt = require("jsonwebtoken")
 
 const DBConnection = require("./src/utils/DBConnection")
 DBConnection()
