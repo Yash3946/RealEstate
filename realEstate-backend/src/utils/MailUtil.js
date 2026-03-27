@@ -6,8 +6,7 @@ const mailSend = async(to,subject,text)=>{
     const transporter = mailer.createTransport({
         service:"gmail",
         auth:{
-            //user:"pythonforsamir@gmail.com",
-            //pass:"add your password here"
+          
             user:process.env.EMAIL_USER,
             pass:process.env.EMAIL_PASSWORD
 
@@ -16,8 +15,8 @@ const mailSend = async(to,subject,text)=>{
     const mailOptions  = {
         to:to,
         subject:subject,
-        text:text
-        //html:text
+       // text:text
+        html:text
     }
     const mailResponse = await transporter.sendMail(mailOptions)
     console.log(mailResponse)

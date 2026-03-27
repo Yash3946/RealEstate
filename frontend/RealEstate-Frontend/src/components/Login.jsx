@@ -1,8 +1,8 @@
 import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
 
@@ -27,6 +27,9 @@ export default function Login() {
         toast.success("Login Success");
 
         const role = res.data.role;
+
+        localStorage.setItem("role", role);
+      localStorage.setItem("token", res.data.token);
 
         if (role === "admin") {
           navigate("/admin");
@@ -128,6 +131,13 @@ export default function Login() {
           </button>
 
         </form>
+
+        <p className="text-center mt-4">
+            forgot password ???{" "}
+            <Link to="/forgotpassword" className="text-blue-500 hover:underline">
+              FORGOT PASSWORD
+            </Link>
+          </p>
 
       </div>
     </div>

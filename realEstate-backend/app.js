@@ -1,45 +1,53 @@
-const express = require("express")
-const app = express()
-const cors = require("cors")
-//load env file.. using process
-require("dotenv").config()
-app.use(express.json())
-app.use(cors()) //allow all requests
-const secret = "secret"
-const jwt = require("jsonwebtoken")
+const express = require("express");
+const app = express();
+const cors = require("cors");
 
-const DBConnection = require("./src/utils/DBConnection")
-DBConnection()
+// load env
+require("dotenv").config();
 
-const userRoutes = require("./src/routes/UserRoutes")
-app.use("/user",userRoutes)
+// middleware
+app.use(express.json());
+app.use(cors());
 
+// 🔥 IMPORTANT: static folder (images access ke liye)
+app.use("/uploads", express.static("uploads"));
 
-const propertyRoutes = require("./src/routes/PropertyRoutes")
-app.use("/prop",propertyRoutes)
+// jwt (optional)
+const jwt = require("jsonwebtoken");
+const secret = "secret";
 
-const propertyLocationRoutes = require("./src/routes/PropertyLocationRoutes")
-app.use("/Location",propertyLocationRoutes)
+// DB connection
+const DBConnection = require("./src/utils/DBConnection");
+DBConnection();
 
-const Inquiryroutes = require("./src/routes/InquiryRoutes")
-app.use("/inquiry",Inquiryroutes)
+// routes
+const userRoutes = require("./src/routes/UserRoutes");
+app.use("/user", userRoutes);
 
+const propertyRoutes = require("./src/routes/PropertyRoutes");
+app.use("/prop", propertyRoutes);
 
-const PropertyVisitRoutes = require("./src/routes/PropertyVisitRoutes")
-app.use("/visit",PropertyVisitRoutes)
+const propertyLocationRoutes = require("./src/routes/PropertyLocationRoutes");
+app.use("/location", propertyLocationRoutes);
 
-const FavoutitePropertyRoutes = require("./src/routes/FavoutitePropertyRoutes")
-app.use("/favourite", FavoutitePropertyRoutes)
+const inquiryRoutes = require("./src/routes/InquiryRoutes");
+app.use("/inquiry", inquiryRoutes);
 
-const ReviewRoutes = require("./src/routes/ReviewRoutes")
-app.use("/review",ReviewRoutes)
+const propertyVisitRoutes = require("./src/routes/PropertyVisitRoutes");
+app.use("/visit", propertyVisitRoutes);
 
+const favouritePropertyRoutes = require("./src/routes/FavoutitePropertyRoutes");
+app.use("/favourite", favouritePropertyRoutes);
 
-const PaymentRoutes = require("./src/routes/PaymentRoutes")
-app.use("/payment",PaymentRoutes)
+const reviewRoutes = require("./src/routes/ReviewRoutes");
+app.use("/review", reviewRoutes);
 
-const PORT = process.env.PORT
-app.listen(PORT,()=>{
-    console.log(`server started on port ${PORT}`)
-})
-//server creation
+const paymentRoutes = require("./src/routes/PaymentRoutes");
+app.use("/payment", paymentRoutes);
+
+// server start
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`server started on port ${PORT}`);
+});

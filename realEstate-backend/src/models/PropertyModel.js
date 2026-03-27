@@ -6,7 +6,12 @@ const propertySchema = new Schema({
         type:String,
         required:true
     },
-
+    propertyPhoto:{
+        type:String
+    },
+    propertyImages:{
+        type:[String]
+    },
     propertyDescription:{
         type:String,
         required:true
