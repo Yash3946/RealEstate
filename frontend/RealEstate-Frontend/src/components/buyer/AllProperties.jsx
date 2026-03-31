@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function AllProperties() {
 
   const [properties, setProperties] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAllProperties();
@@ -26,7 +28,14 @@ export default function AllProperties() {
       <div className="grid grid-cols-4 gap-6">
 
         {properties.map((prop) => (
-          <div key={prop._id} className="bg-white rounded-xl shadow">
+          <div
+            key={prop._id}
+            
+            // 🔥 CLICK ADD KARO
+            onClick={() => navigate(`/property/${prop._id}`)}
+
+            className="bg-white rounded-xl shadow cursor-pointer hover:scale-105 transition"
+          >
 
             <img
               src={prop.propertyImages?.[0]}

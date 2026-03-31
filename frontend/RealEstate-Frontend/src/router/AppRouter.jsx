@@ -9,6 +9,8 @@ import ProtectedRoutes from "../components/ProtectedRoutes";
 import { Forgotpassword } from "../components/forgotpassword";
 import { ResetPassword } from "../components/ResetPassword";
 import AllProperties from "../components/buyer/AllProperties";
+import PropertyDetail from "../components/buyer/PropertyDetail";
+
 
 const router = createBrowserRouter([
   // ================= AUTH =================
@@ -27,12 +29,19 @@ const router = createBrowserRouter([
     ),
   },
 
-  // 🔥 NEW ROUTE (SEE ALL PAGE)
   {
     path: "/properties",
     element: (
       <ProtectedRoutes userRoles={["buyer"]}>
         <AllProperties />
+      </ProtectedRoutes>
+    ),
+  },
+  {
+    path: "/property/:id",
+    element: (
+      <ProtectedRoutes userRoles={["buyer"]}>
+        <PropertyDetail />
       </ProtectedRoutes>
     ),
   },
@@ -46,7 +55,10 @@ const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
     children: [
-      { path: "allusers", element: <AllUserList /> }
+      { path: "allusers", element: <AllUserList /> },
+
+      // // 🔥 FIX HERE
+      // { path: "addLocation", element: <AdminLocationPage /> }
     ],
   },
 ]);

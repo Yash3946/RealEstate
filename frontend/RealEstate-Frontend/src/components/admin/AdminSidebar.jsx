@@ -15,7 +15,7 @@ export const AdminSidebar = () => {
 
         {/* TOGGLE */}
         <button
-          className="mb-6 text-white"
+          className="mb-6 text-white text-xl"
           onClick={() => setIsOpen(!isOpen)}
         >
           ☰
@@ -23,33 +23,37 @@ export const AdminSidebar = () => {
 
         <ul className="space-y-4 font-medium">
 
+          {/* USERS */}
           <li>
             <Link to="/admin/allusers" className="block hover:text-blue-400">
-              {isOpen ? "All Users" : "👥"}
+              {isOpen ? "👥 All Users" : "👥"}
             </Link>
           </li>
 
+          {/* BUYER */}
           <li>
-            <Link to="/admin/allusers" className="block hover:text-blue-400">
-              {isOpen ? "Buyer" : "🧑"}
+            <Link to="/admin/buyer" className="block hover:text-blue-400">
+              {isOpen ? "🧑 Buyer" : "🧑"}
             </Link>
           </li>
 
+          {/* SETTINGS */}
           <li>
-            <Link to="/admin/allusers" className="block hover:text-blue-400">
-              {isOpen ? "Settings" : "⚙️"}
+            <Link to="/admin/settings" className="block hover:text-blue-400">
+              {isOpen ? "⚙️ Settings" : "⚙️"}
             </Link>
           </li>
 
+          {/* LOGOUT */}
           <li>
             <button
               onClick={() => {
                 localStorage.clear();
                 navigate("/");
               }}
-              className="bg-red-500 px-3 py-1 rounded hover:bg-red-600"
+              className="bg-red-500 px-3 py-1 rounded hover:bg-red-600 w-full"
             >
-              {isOpen ? "Logout" : "🚪"}
+              {isOpen ? "🚪 Logout" : "🚪"}
             </button>
           </li>
 

@@ -1,5 +1,8 @@
 const propertySchema = require("../models/PropertyModel");
 
+
+
+
 // =======================
 // GET ALL
 // =======================
@@ -219,6 +222,77 @@ const searchProperty = async (req, res) => {
   }
 };
 
+
+// 🔹 GET SINGLE PROPERTY
+const getPropertyById = async (req, res) => {
+  try {
+    const property = await propertySchema.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).json({
+        message: "Property not found"
+      });
+    }
+
+    return res.status(200).json({
+      message: "Property fetched successfully",
+      data: property
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error fetching property",
+      err: err
+    });
+  }
+};
+
+const addPropertyLocation = async (req, res) => {
+  try {
+
+    const {
+      propertyLocationId,
+      address,
+      city,
+      state,
+      country,
+      pincode,
+      latitude,
+      longitude
+    } = req.body;
+
+    const addLocation = await propertyLocationSchema.create({
+      propertyLocationId,
+      address,
+      city,
+      state,
+      country,
+      pincode,
+
+      location: {
+        type: "Point",
+        coordinates: [
+          parseFloat(longitude),   // 🔥 FIX
+          parseFloat(latitude)     // 🔥 FIX
+        ]
+      }
+    });
+
+    res.status(200).json({
+      message: "Property Location added successfully",
+      data: addLocation
+    });
+
+  } catch (err) {
+    console.log("ERROR:", err);  // 👈 IMPORTANT
+
+    res.status(500).json({
+      message: "error while adding property location",
+      err: err.message
+    });
+  }
+};
+
 module.exports = {
   getProperties,
   addProperty,
@@ -227,4 +301,6 @@ module.exports = {
   deleteProperty,
   getAllProperties,
   searchProperty,
+  getPropertyById,
+  addPropertyLocation
 };

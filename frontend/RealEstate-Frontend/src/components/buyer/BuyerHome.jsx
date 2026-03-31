@@ -64,7 +64,6 @@ export default function BuyerHome() {
         <div className="flex justify-between mb-6">
           <h2 className="text-2xl font-bold">Popular Properties</h2>
 
-          {/* 🔥 SEE ALL BUTTON */}
           <button
             onClick={() => navigate("/properties")}
             className="text-blue-600 font-semibold"
@@ -91,8 +90,13 @@ export default function BuyerHome() {
 
           <div id="slider" className="flex gap-6 overflow-x-auto">
 
+            {/* 🔥 UPDATED MAP WITH CLICK NAVIGATION */}
             {properties.map((prop) => (
-              <div key={prop._id} className="min-w-[300px] bg-white rounded-xl shadow">
+              <div 
+                key={prop._id} 
+                onClick={() => navigate(`/property/${prop._id}`)}
+                className="min-w-[300px] bg-white rounded-xl shadow cursor-pointer hover:scale-105 transition"
+              >
 
                 <img
                   src={prop.propertyImages?.[0]}
@@ -102,7 +106,9 @@ export default function BuyerHome() {
                 <div className="p-4">
                   <h3 className="font-semibold">{prop.propertyTitle}</h3>
 
-                  <p className="text-gray-500 text-sm">{prop.propertyType}</p>
+                  <p className="text-gray-500 text-sm">
+                    {prop.propertyType}
+                  </p>
 
                   <div className="text-blue-600 font-bold">
                     ₹ {prop.price.toLocaleString()}
