@@ -29,21 +29,16 @@ export const AdminSidebar = () => {
               {isOpen ? "👥 All Users" : "👥"}
             </Link>
           </li>
-
-          {/* BUYER */}
           <li>
-            <Link to="/admin/buyer" className="block hover:text-blue-400">
-              {isOpen ? "🧑 Buyer" : "🧑"}
-            </Link>
-          </li>
-
-          {/* SETTINGS */}
+          <Link to="/admin/visits" className="block hover:text-blue-400">
+            {isOpen ? "📅 Visits" : "📅"}
+          </Link>
+        </li>
           <li>
-            <Link to="/admin/settings" className="block hover:text-blue-400">
-              {isOpen ? "⚙️ Settings" : "⚙️"}
-            </Link>
-          </li>
-
+        <Link to="/admin/properties" className="block hover:text-blue-400">
+          {isOpen ? "🏠 Properties" : "🏠"}
+        </Link>
+      </li>
           {/* LOGOUT */}
           <li>
             <button

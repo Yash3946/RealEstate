@@ -1,41 +1,26 @@
 const router = require("express").Router();
-const propertyController = require("../controllers/PropertyController");
+const controller = require("../controllers/PropertyController");
 const upload = require("../middleware/uploadMiddlewarev2");
+const validateToken = require("../middleware/AuthMiddleware");
 
+// ADMIN → all properties
+router.get("/", validateToken, controller.getProperties);
 
-router.get("/", propertyController.getProperties)
+// BUYER → all properties
+router.get("/all", controller.getAllProperties);
 
-// GET ALL PROPERTIES
-router.get("/properties", propertyController.getProperties);
+// OWNER → my properties
+router.get("/my", validateToken, controller.getMyProperties);
 
-
-// ADD PROPERTY (simple - JSON)
-router.post("/save", propertyController.addProperty);
-
-// CREATE PROPERTY WITH IMAGES
-router.put(
-    "/update/:id",
-    upload.array("propertyImages", 5),
-    propertyController.updateProperty
-  );
-
-// UPDATE PROPERTY WITH IMAGES
-router.put(
-  "/update/:id",
-  upload.array("propertyImages", 5), // 🔥 update images also
-  propertyController.updateProperty
+// CREATE
+router.post(
+  "/create",
+  validateToken,
+  upload.array("propertyImages", 5),
+  controller.createProperty
 );
 
-//DELETE PROPERTY
-router.delete("/delete/:id", propertyController.deleteProperty);
-
-//GET ALL (WITH LIMIT)
-router.get("/all", propertyController.getAllProperties);
-
-// SEARCH PROPERTY
-router.get("/search", propertyController.searchProperty);
-
-//  GET SINGLE
-router.get("/property/:id", propertyController.getPropertyById);
+// DELETE
+router.delete("/delete/:id", validateToken, controller.deleteProperty);
 
 module.exports = router;

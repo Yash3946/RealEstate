@@ -1,23 +1,25 @@
 const PropertyVisitSchema = require("../models/PropertyVisitModel")
 
-const getPropertyVisit = async (req,res)=>{
-    try{
-        const propertyVisit = await PropertyVisitSchema.find()
-
-        res.status(200).json({
-            Message:"Poperty visited Successfully",
-            data:propertyVisit
-        })
+const getPropertyVisit = async (req, res) => {
+    try {
+      const propertyVisit = await PropertyVisitSchema
+        .find()
+        .populate("propertyId")
+        .populate("buyerId")
+        .populate("ownerId");
+  
+      res.status(200).json({
+        message: "Property visits fetched",
+        data: propertyVisit
+      });
+  
+    } catch (err) {
+      res.status(500).json({
+        message: "Error fetching visits",
+        err: err
+      });
     }
-    catch(err)
-    {
-        res.status(500).json({
-            Message:"Poperty visited  i not Successfully",
-            err:err
-        })
-    }
-}
-
+  };
 const addPropertyVisit = async (req,res)=>{
     try
     {
@@ -80,6 +82,7 @@ catch(err)
     })
 }
 }
+
 module.exports={
     getPropertyVisit,
     addPropertyVisit,

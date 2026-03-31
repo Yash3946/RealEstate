@@ -1,99 +1,87 @@
-const mongoose = require("mongoose")
-const Schema = mongoose.Schema
+const mongoose = require("mongoose");
 
-const propertySchema = new Schema({
-    propertyTitle:{
-        type:String,
-        required:true
-    },
-    propertyPhoto:{
-        type:String
-    },
-    propertyImages:{
-        type:[String]
-    },
-    propertyDescription:{
-        type:String,
-        required:true
+const propertySchema = new mongoose.Schema(
+  {
+    propertyTitle: {
+      type: String,
+      required: true,
+      trim: true,
     },
 
-    propertyType:{
-        type:String,
-        enum:["House","Apartment","Land","Commercial"],
-        required:true
+    propertyDescription: {
+      type: String,
+      required: true,
     },
 
-    listingType:{
-        type:String,
-        enum:["Sale","Rent"],
-        required:true
+    propertyType: {
+      type: String,
+      enum: ["House", "Apartment", "Land", "Commercial"],
+      default: "House",
     },
 
-    price:{
-        type:Number,
-        required:true
+    listingType: {
+      type: String,
+      enum: ["Sale", "Rent"],
+      default: "Sale",
     },
 
-    area:{
-        type:Number,
-        required:true
+    price: {
+      type: Number,
+      required: true,
     },
 
-    bedrooms:{
-        type:Number,
-        required:true
+    area: {
+      type: Number,
     },
 
-    bathrooms:{
-        type:Number,
-        required:true
+    bedrooms: {
+      type: Number,
+      default: 0,
     },
 
-    furnishing:{
-        type:String,
-        enum:["Furnished","Semi Furnished","Unfurnished"],
-        default:"Unfurnished",
-        required:true
+    bathrooms: {
+      type: Number,
+      default: 0,
     },
 
-    parking:{
-        type:Boolean,
-        default:false,
-        required:true
+    furnishing: {
+      type: String,
+      enum: ["Furnished", "Semi Furnished", "Unfurnished"],
+      default: "Unfurnished",
     },
 
-    amenities:[
-        {
-            type:String
-        }
-    ],
-
-    images:[
-        {
-            type:String
-        }
-    ],
-
-    ownerId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"users"
+    parking: {
+      type: Boolean,
+      default: false,
     },
 
-    agentId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"users"
-    },
-
-    status:{
-        type:String,
-        enum:["Available","Sold","Rented"],
-        default:"Available"
-    },
-    approvalStatus: {
+    // 🔥 ONLY ONE IMAGE FIELD
+    propertyImages: [
+      {
         type: String,
-        enum: ["Pending", "Approved", "Rejected"],
-        default: "Pending"
-      }
+      },
+    ],
 
-},{timestamps:true})
-module.exports = mongoose.model("Property",propertySchema)
+    // 🔥 OWNER LINK (VERY IMPORTANT)
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
+
+    status: {
+      type: String,
+      enum: ["Available", "Sold", "Rented"],
+      default: "Available",
+    },
+
+    approvalStatus: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected"],
+      default: "Pending",
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Property", propertySchema);

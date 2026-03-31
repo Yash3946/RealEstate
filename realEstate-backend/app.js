@@ -1,26 +1,20 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-
-// load env
 require("dotenv").config();
 
-// middleware
+// ================= MIDDLEWARE =================
 app.use(express.json());
 app.use(cors());
 
-// 🔥 IMPORTANT: static folder (images access ke liye)
+// 🔥 VERY IMPORTANT (IMAGE ACCESS FIX)
 app.use("/uploads", express.static("uploads"));
 
-// jwt (optional)
-const jwt = require("jsonwebtoken");
-const secret = "secret";
-
-// DB connection
+// ================= DB =================
 const DBConnection = require("./src/utils/DBConnection");
 DBConnection();
 
-// routes
+// ================= ROUTES =================
 const userRoutes = require("./src/routes/UserRoutes");
 app.use("/user", userRoutes);
 
@@ -45,9 +39,9 @@ app.use("/review", reviewRoutes);
 const paymentRoutes = require("./src/routes/PaymentRoutes");
 app.use("/payment", paymentRoutes);
 
-// server start
+// ================= SERVER =================
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`server started on port ${PORT}`);
+  console.log(`Server started on port ${PORT} 🚀`);
 });

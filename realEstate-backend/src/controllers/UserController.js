@@ -199,6 +199,29 @@ const resetPassword = async(req,res)=>{
 
 }
 
+const changeUserRole = async (req, res) => {
+    try {
+      const { role } = req.body;
+  
+      const updatedUser = await userSchema.findByIdAndUpdate(
+        req.params.id,
+        { role: role },
+        { new: true }
+      );
+  
+      res.status(200).json({
+        message: "Role updated successfully",
+        data: updatedUser,
+      });
+  
+    } catch (err) {
+      res.status(500).json({
+        message: "Error updating role",
+        err: err,
+      });
+    }
+  };
+
 module.exports ={
     registerUser,
     loginUser,
@@ -206,5 +229,6 @@ module.exports ={
     updateUser,
     deleteUser,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    changeUserRole
 }

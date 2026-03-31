@@ -32,9 +32,9 @@ const PropertyVisitSchema = new mongoose.Schema(
 
     status: {
         type: String,
-        enum: ["Requested", "Approved", "Completed"],
+        enum: ["Requested", "Approved", "Rejected", "Completed"],
         default: "Requested"
-    }
+      }
 },
 {
     timestamps: true

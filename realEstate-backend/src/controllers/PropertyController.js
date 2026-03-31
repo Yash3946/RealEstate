@@ -1,306 +1,127 @@
-const propertySchema = require("../models/PropertyModel");
-
-
-
+const Property = require("../models/PropertyModel");
 
 // =======================
-// GET ALL
+// ADMIN - GET ALL
 // =======================
 const getProperties = async (req, res) => {
   try {
-    const properties = await propertySchema.find();
+    const properties = await Property.find().sort("-createdAt");
 
-    return res.status(200).json({
-      message: "property fetch successfully",
+    res.status(200).json({
+      message: "All properties fetched ✅",
       data: properties,
     });
   } catch (err) {
-    return res.status(500).json({
-      message: "Error while fetching properties",
-      err: err,
+    res.status(500).json({
+      message: "Error ❌",
+      err: err.message,
     });
   }
 };
 
 // =======================
-// ADD (JSON)
-// =======================
-const addProperty = async (req, res) => {
-  try {
-    const saveProperty = await propertySchema.create(req.body);
-
-    return res.status(200).json({
-      message: "property added successfully",
-      data: saveProperty,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      message: "Error while adding property",
-      err: err,
-    });
-  }
-};
-
-// =======================
-// CREATE WITH IMAGES
+// OWNER - CREATE PROPERTY
 // =======================
 const createProperty = async (req, res) => {
   try {
-    console.log("FILES:", req.files);
+    let images = [];
 
-    let imagePaths = [];
-
-    if (req.files && req.files.length > 0) {
-      imagePaths = req.files.map((file) => {
-        return `http://localhost:3000/${file.path}`;
-      });
+    if (Array.isArray(req.files) && req.files.length > 0) {
+      images = req.files.map(
+        (file) => `http://localhost:3000/uploads/${file.filename}`
+      );
     }
 
-    const savedProperty = await propertySchema.create({
+    const property = await Property.create({
       ...req.body,
-      propertyImages: imagePaths,
+      propertyImages: images,
+      ownerId: req.user._id,
     });
 
-    return res.status(201).json({
-      message: "property created",
-      data: savedProperty,
+    res.status(201).json({
+      message: "Property Created ✅",
+      data: property,
     });
+
   } catch (err) {
     console.log(err);
-    return res.status(500).json({
-      message: "error while creating property",
-      err: err,
+    res.status(500).json({
+      message: "Error creating property ❌",
+      err: err.message,
     });
   }
 };
 
 // =======================
-// UPDATE WITH IMAGES
+// OWNER - GET MY PROPERTIES
 // =======================
-const updateProperty = async (req, res) => {
+const getMyProperties = async (req, res) => {
   try {
-    console.log("FILES:", req.files);
+    const properties = await Property.find({
+      ownerId: req.user._id,
+    }).sort("-createdAt");
 
-    let updateData = { ...req.body };
-
-    // 👉 new images aaye to update karo
-    if (req.files && req.files.length > 0) {
-      const imagePaths = req.files.map((file) => {
-        return `http://localhost:3000/${file.path}`;
-      });
-
-      updateData.propertyImages = imagePaths;
-    }
-
-    const update = await propertySchema.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    );
-
-    if (!update) {
-      return res.status(404).json({
-        message: "Property not found",
-      });
-    }
-
-    return res.status(200).json({
-      message: "property updated successfully",
-      data: update,
+    res.json({
+      message: "My properties ✅",
+      data: properties,
     });
+
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      message: "property is not updated",
-      err: err,
+    res.status(500).json({
+      message: "Error ❌",
+      err: err.message,
     });
   }
 };
 
 // =======================
-// DELETE
+// OWNER - DELETE
 // =======================
 const deleteProperty = async (req, res) => {
   try {
-    const deleted = await propertySchema.findByIdAndDelete(req.params.id);
+    const property = await Property.findById(req.params.id);
 
-    if (!deleted) {
-      return res.status(404).json({
-        message: "Property not found",
-      });
+    if (!property) {
+      return res.status(404).json({ message: "Not found ❌" });
     }
 
-    return res.status(200).json({
-      message: "property deleted successfully",
-      data: deleted,
-    });
+    if (property.ownerId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not allowed ❌" });
+    }
+
+    await Property.findByIdAndDelete(req.params.id);
+
+    res.json({ message: "Deleted ✅" });
+
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      message: "property is not deleted",
-      err: err,
-    });
+    res.status(500).json({ message: err.message });
   }
 };
 
 // =======================
-// GET WITH LIMIT
+// BUYER - GET ALL
 // =======================
 const getAllProperties = async (req, res) => {
   try {
-    const size = req.query.size;
+    const properties = await Property.find().sort("-createdAt");
 
-    let property;
-
-    if (size) {
-      property = await propertySchema
-        .find({})
-        .sort("-createdAt")
-        .limit(Number(size));
-    } else {
-      property = await propertySchema.find({}).sort("-createdAt");
-    }
-
-    return res.status(200).json({
-      message: "properties fetched successfully",
-      data: property,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      message: "error fetching properties",
-      err: err,
-    });
-  }
-};
-
-// =======================
-// SEARCH
-// =======================
-const searchProperty = async (req, res) => {
-  try {
-    const {
-      location,
-      propertyType,
-      minPrice,
-      maxPrice,
-      minArea,
-      maxArea,
-    } = req.query;
-
-    const query = {};
-
-    if (location) query.location = { $regex: location, $options: "i" };
-    if (propertyType)
-      query.propertyType = { $regex: propertyType, $options: "i" };
-
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
-    }
-
-    if (minArea || maxArea) {
-      query.area = {};
-      if (minArea) query.area.$gte = Number(minArea);
-      if (maxArea) query.area.$lte = Number(maxArea);
-    }
-
-    const foundProperties = await propertySchema
-      .find(query)
-      .sort("-createdAt");
-
-    return res.status(200).json({
-      message: "properties fetched successfully",
-      data: foundProperties,
-    });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      message: "error while finding property",
-      err: err,
-    });
-  }
-};
-
-
-// 🔹 GET SINGLE PROPERTY
-const getPropertyById = async (req, res) => {
-  try {
-    const property = await propertySchema.findById(req.params.id);
-
-    if (!property) {
-      return res.status(404).json({
-        message: "Property not found"
-      });
-    }
-
-    return res.status(200).json({
-      message: "Property fetched successfully",
-      data: property
+    res.json({
+      message: "All properties ✅",
+      data: properties,
     });
 
   } catch (err) {
-    return res.status(500).json({
-      message: "Error fetching property",
-      err: err
-    });
-  }
-};
-
-const addPropertyLocation = async (req, res) => {
-  try {
-
-    const {
-      propertyLocationId,
-      address,
-      city,
-      state,
-      country,
-      pincode,
-      latitude,
-      longitude
-    } = req.body;
-
-    const addLocation = await propertyLocationSchema.create({
-      propertyLocationId,
-      address,
-      city,
-      state,
-      country,
-      pincode,
-
-      location: {
-        type: "Point",
-        coordinates: [
-          parseFloat(longitude),   // 🔥 FIX
-          parseFloat(latitude)     // 🔥 FIX
-        ]
-      }
-    });
-
-    res.status(200).json({
-      message: "Property Location added successfully",
-      data: addLocation
-    });
-
-  } catch (err) {
-    console.log("ERROR:", err);  // 👈 IMPORTANT
-
     res.status(500).json({
-      message: "error while adding property location",
-      err: err.message
+      message: "Error ❌",
+      err: err.message,
     });
   }
 };
 
 module.exports = {
   getProperties,
-  addProperty,
   createProperty,
-  updateProperty,
+  getMyProperties,
   deleteProperty,
   getAllProperties,
-  searchProperty,
-  getPropertyById,
-  addPropertyLocation
 };

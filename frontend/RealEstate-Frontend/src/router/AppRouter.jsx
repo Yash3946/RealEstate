@@ -10,7 +10,9 @@ import { Forgotpassword } from "../components/forgotpassword";
 import { ResetPassword } from "../components/ResetPassword";
 import AllProperties from "../components/buyer/AllProperties";
 import PropertyDetail from "../components/buyer/PropertyDetail";
-
+import Owner from "../components/owner/owner";
+import AllPropertiesAdmin from "../components/admin/AllPropertiesAdmin";
+import AdminVisitRequests from "../components/admin/AdminVisitRequests";
 
 const router = createBrowserRouter([
   // ================= AUTH =================
@@ -37,6 +39,7 @@ const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
   },
+
   {
     path: "/property/:id",
     element: (
@@ -55,11 +58,35 @@ const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
     children: [
-      { path: "allusers", element: <AllUserList /> },
+      { index: true, element: <AllUserList /> },
 
-      // // 🔥 FIX HERE
-      // { path: "addLocation", element: <AdminLocationPage /> }
+      // 👥 USERS
+      { path: "allusers", element: <AllUserList /> },
+      { path: "buyer", element: <AllUserList role="buyer" /> },
+      { path: "owner", element: <AllUserList role="owner" /> },
+
+      // 🏠 PROPERTIES
+      { path: "properties", element: <AllPropertiesAdmin /> },
+
+      // 📅 VISIT MANAGEMENT
+      { path: "visits", element: <AdminVisitRequests /> },
     ],
+  },
+
+  // ================= OWNER =================
+  {
+    path: "/owner",
+    element: (
+      <ProtectedRoutes userRoles={["owner"]}>
+        <Owner />
+      </ProtectedRoutes>
+    ),
+  },
+
+  // ================= DEFAULT REDIRECT =================
+  {
+    path: "*",
+    element: <h1 className="text-center mt-10 text-2xl">404 - Page Not Found</h1>,
   },
 ]);
 
